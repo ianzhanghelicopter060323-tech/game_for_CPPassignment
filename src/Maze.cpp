@@ -1,8 +1,10 @@
 #include "Maze.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <ctime>
+#include <queue>
 
 Maze::Maze(int width, int height)
     : widthValue(width), heightValue(height),
@@ -47,6 +49,7 @@ void Maze::generate(int level) {
   exitPos = exitRoom->center();
   grid[startPos.y][startPos.x] = ' ';
   grid[exitPos.y][exitPos.x] = ' ';
+  ensureStartExitConnected();
 }
 
 bool Maze::inBounds(Point p) const {
@@ -243,6 +246,50 @@ Point Maze::connectRooms(BSPNode &node) {
   }
 
   return leftCenter.x >= 0 ? leftCenter : rightCenter;
+}
+
+bool Maze::hasPath(Point from, Point to) const {
+  if (!isWalkable(from) || !isWalkable(to)) {
+    return false;
+  }
+
+  std::queue<Point> frontier;
+  std::vector<std::vector<bool>> visited(
+      heightValue, std::vector<bool>(widthValue, false));
+  static const std::array<Point, 4> dirs = {
+      Point{1, 0}, Point{-1, 0}, Point{0, 1}, Point{0, -1}};
+
+  frontier.push(from);
+  visited[from.y][from.x] = true;
+
+  while (!frontier.empty()) {
+    Point current = frontier.front();
+    frontier.pop();
+    if (current == to) {
+      return true;
+    }
+
+    for (Point dir : dirs) {
+      Point next = current + dir;
+      if (!inBounds(next) || visited[next.y][next.x] || !isWalkable(next)) {
+        continue;
+      }
+      visited[next.y][next.x] = true;
+      frontier.push(next);
+    }
+  }
+
+  return false;
+}
+
+void Maze::ensureStartExitConnected() {
+  if (hasPath(startPos, exitPos)) {
+    return;
+  }
+
+  // 地图生成异常断开时，补一条 L 形通道，保证关卡一定可完成。
+  carveHorizontal(startPos.x, exitPos.x, startPos.y);
+  carveVertical(startPos.y, exitPos.y, exitPos.x);
 }
 
 void Maze::carveRoom(const Room &room) {

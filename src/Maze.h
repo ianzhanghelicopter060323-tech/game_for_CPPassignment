@@ -61,6 +61,8 @@ private:
   void split(BSPNode &node, int depth);
   void createRooms(BSPNode &node);
   Point connectRooms(BSPNode &node);
+  bool hasPath(Point from, Point to) const;
+  void ensureStartExitConnected();
   void carveRoom(const Room &room);
   void carveHorizontal(int x1, int x2, int y);
   void carveVertical(int y1, int y2, int x);
