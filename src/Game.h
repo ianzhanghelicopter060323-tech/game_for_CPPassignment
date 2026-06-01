@@ -32,6 +32,7 @@ public:
   int level() const { return currentLevel; }
   int sprintCooldownTicks() const { return sprintCooldown; }
   int sprintCooldownMaxTicks() const { return sprintCooldownMax; }
+  int playerInvincibleTicksRemaining() const { return playerInvincibleTicks; }
   const std::string &message() const { return statusMessage; }
 
 private:
@@ -49,6 +50,7 @@ private:
   int frame = 0;
   int sprintCooldown = 0;
   const int sprintCooldownMax = 58;
+  int playerInvincibleTicks = 0;
   bool quitRequested = false;
   bool levelTookDamage = false;
   std::string statusMessage = "准备进入地牢。";
