@@ -9,7 +9,6 @@
 
 namespace {
 constexpr int kFramesPerSecond = 30;
-constexpr int kPlayerInvincibleTicks = kFramesPerSecond;
 
 int distanceManhattan(Point a, Point b) {
   return std::abs(a.x - b.x) + std::abs(a.y - b.y);
@@ -128,7 +127,6 @@ void Game::startNewGame() {
   achievements.killsByKind[MonsterKind::Troll] = 0;
   achievements.killsByKind[MonsterKind::Dragon] = 0;
   sprintCooldown = 0;
-  playerInvincibleTicks = 0;
   statusMessage = "左键射击，找到出口进入下一关。";
   buildLevel();
 }
@@ -141,9 +139,6 @@ void Game::update() {
   ++frame;
   if (sprintCooldown > 0) {
     --sprintCooldown;
-  }
-  if (playerInvincibleTicks > 0) {
-    --playerInvincibleTicks;
   }
   if (messageTimer > 0) {
     --messageTimer;
@@ -166,7 +161,6 @@ void Game::buildLevel() {
   monsters.clear();
   pickups.clear();
   levelTookDamage = false;
-  playerInvincibleTicks = 0;
 
   spawnMonsters();
   spawnPickups();
@@ -386,11 +380,7 @@ void Game::damagePlayer(int amount, const std::string &reason) {
   if (amount <= 0 || player.hp <= 0) {
     return;
   }
-  if (playerInvincibleTicks > 0) {
-    return;
-  }
   player.hp -= amount;
-  playerInvincibleTicks = kPlayerInvincibleTicks;
   levelTookDamage = true;
   setMessage(reason + " -" + std::to_string(amount) + "HP", 65);
 }

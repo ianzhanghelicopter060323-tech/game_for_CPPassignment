@@ -179,10 +179,7 @@ void Renderer::drawPlaying(const Game &game) {
   for (const Monster &monster : game.getMonsters()) {
     drawGlyph(monster.pos, monsterGlyph(monster.kind), PairMonster, A_BOLD);
   }
-  const int invincibleTicks = game.playerInvincibleTicksRemaining();
-  const bool playerFlash = invincibleTicks > 0 && (invincibleTicks / 4) % 2 == 0;
-  drawGlyph(player.pos, '@', playerFlash ? PairUi : PairPlayer,
-            A_BOLD | (playerFlash ? A_REVERSE : 0));
+  drawGlyph(player.pos, '@', PairPlayer, A_BOLD);
 
   std::string topLine = "关卡 " + std::to_string(game.level()) +
                         "  HP " + std::to_string(player.hp) + "/" +
