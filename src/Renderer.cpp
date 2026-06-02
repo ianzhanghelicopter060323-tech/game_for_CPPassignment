@@ -51,6 +51,10 @@ void printClipped(int row, int col, int width, const std::string &text,
   mvprintw(row, col, "%s", clipped.c_str());
   attroff(attrs);
 }
+
+int centeredColumn(int cols, const std::string &text) {
+  return std::max(0, (cols - static_cast<int>(text.size())) / 2);
+}
 } // namespace
 
 Renderer::Renderer() { initColors(); }
@@ -108,9 +112,9 @@ void Renderer::drawMenu(const Game &game) {
   getmaxyx(stdscr, rows, cols);
 
   const int titleRow = std::max(2, rows / 4);
-  const std::string title = "ASCII 迷宫枪战";
+  const std::string title = "The @rcher's Quest: Dragon Slayer";
   const std::string subTitle = "WASD 移动  鼠标左键射击  Shift+WASD 疾跑";
-  printClipped(titleRow, std::max(0, cols / 2 - 10), cols, title,
+  printClipped(titleRow, centeredColumn(cols, title), cols, title,
                A_BOLD | COLOR_PAIR(PairTitle));
   printClipped(titleRow + 2, std::max(0, cols / 2 - 24), cols, subTitle,
                COLOR_PAIR(PairUi));
